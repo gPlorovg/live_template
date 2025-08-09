@@ -1,0 +1,4 @@
+.idea/
+snd*.py
+poetry.lock
+*.env
