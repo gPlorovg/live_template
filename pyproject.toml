@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "live_template"
+version = "0.1.0"
+description = "LT"
+authors = [{ name="gPlorovg", email="gplorovg@gmail.com" }]
+dependencies = ["watchdog (>=6.0.0,<7.0.0)"]
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+include = ["live_template*"]
+
+[tool.setuptools.package-data]
+"live_template" = ["config.json", "templates/*.py"]

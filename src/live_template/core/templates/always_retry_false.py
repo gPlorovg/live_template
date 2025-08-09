@@ -1,0 +1,3 @@
+text = """
+Always retry disabled!
+"""
