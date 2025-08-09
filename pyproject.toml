@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "live_template"
-version = "0.1.0"
-description = "LT"
+version = "0.1.1"
+description = "LiveTemplate is a tool for local development and testing of Telegram bots, designed to simplify working with message templates and instantly display changes without restarting the bot."
 readme = "README.md"
 license = "MIT"
 authors = ["gPlorovg <gplorovg@gmail.com>"]
