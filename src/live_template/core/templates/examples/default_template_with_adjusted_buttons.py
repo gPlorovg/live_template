@@ -11,22 +11,10 @@ text = """
 parse_mode = "HTML"
 
 buttons = [
-    {
-    "text": "Button1_1",
-    "callback_data": "b1_1"
-    },
-    {
-        "text": "Button1_2",
-        "callback_data": "b1_2"
-    },
-    {
-        "text": "Button1_3",
-        "callback_data": "b1_3"
-    },
-    {
-        "text": "Button2_1",
-        "callback_data": "b2_1"
-    },
+    {"text": "Button1_1", "callback_data": "b1_1"},
+    {"text": "Button1_2", "callback_data": "b1_2"},
+    {"text": "Button1_3", "callback_data": "b1_3"},
+    {"text": "Button2_1", "callback_data": "b2_1"},
 ]
 
 btn_row_sizes = [3, 1]

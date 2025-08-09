@@ -1,5 +1,5 @@
-from importlib.abc import Traversable
 import logging
+from importlib.abc import Traversable
 from importlib.resources import files
 
 

@@ -3,6 +3,7 @@ This module contains TemplateStorage class that implements key-value storage whe
 template and value is object of Template class. Storage deal with template names and
 translate it to file names to check exists.
 """
+
 from dataclasses import asdict, dataclass
 from enum import Enum
 from importlib.abc import Traversable
@@ -10,8 +11,14 @@ from pathlib import Path
 from typing import Union
 
 from ..core import log, package_root
-from ..utils.utils import (get_name_by_path, get_path_by_name, parse_template,
-                                       get_internal_name_by_path, get_path_by_internal_name, iter_traversable)
+from ..utils.utils import (
+    get_internal_name_by_path,
+    get_name_by_path,
+    get_path_by_internal_name,
+    get_path_by_name,
+    iter_traversable,
+    parse_template,
+)
 
 
 @dataclass
@@ -37,7 +44,6 @@ class Template:
     buttons: Union[list[list[InlineButton]], list[InlineButton], None] = None
     btn_row_sizes: Union[list[int], None] = None
 
-
     def to_dict(self):
         return asdict(self)
 
@@ -47,9 +53,11 @@ class Template:
             try:
                 self.parse_mode = ParseMode[self.parse_mode]
             except KeyError:
-                log.exception(f"Unacceptable value for parse_mode: {self.parse_mode}\n"
-                                 f"Acceptable values: "
-                                 f"{' | '.join([mode.value for mode in ParseMode])}")
+                log.exception(
+                    f"Unacceptable value for parse_mode: {self.parse_mode}\n"
+                    f"Acceptable values: "
+                    f"{' | '.join([mode.value for mode in ParseMode])}"
+                )
                 return
 
         # Convert buttons from a one- or two-dimensional list of dicts to
@@ -64,9 +72,7 @@ class Template:
                         [to_inline_button(btn) for btn in row] for row in self.buttons
                     ]
                 elif all(isinstance(b, dict) for b in self.buttons):
-                    self.buttons = [
-                        to_inline_button(btn) for btn in self.buttons
-                    ]
+                    self.buttons = [to_inline_button(btn) for btn in self.buttons]
                 else:
                     raise ValueError
 
@@ -133,8 +139,10 @@ class TemplateStorage(BaseTemplateStorage):
         super().__init__(templates_dir, default_template)
 
         if not self.templates_dir.is_dir():
-            raise RuntimeError(f"Package cannot work without templates directory. Bad path:"
-                               f" {self.templates_dir.resolve()}")
+            raise RuntimeError(
+                f"Package cannot work without templates directory. Bad path:"
+                f" {self.templates_dir.resolve()}"
+            )
 
         self._load_templates()
 
@@ -161,7 +169,7 @@ class InternalTemplateStorage(BaseTemplateStorage):
         self.templates_dir = templates_dir
 
         if not self.templates_dir.is_dir():
-            raise RuntimeError(f"Internal Storage bad templates directory!")
+            raise RuntimeError("Internal Storage bad templates directory!")
 
         self._load_templates()
 
@@ -176,7 +184,9 @@ class InternalTemplateStorage(BaseTemplateStorage):
 
     def _add(self, template_name: str):
         try:
-            data = parse_template(get_path_by_internal_name(template_name, self.templates_dir))
+            data = parse_template(
+                get_path_by_internal_name(template_name, self.templates_dir)
+            )
             for k in ("text", "parse_mode", "buttons", "btn_row_sizes"):
                 if k not in data and k in self.default_template:
                     data[k] = self.default_template[k]

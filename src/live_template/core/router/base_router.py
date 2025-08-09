@@ -1,12 +1,16 @@
-from abc import ABC, abstractmethod
 import asyncio
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Union
 
 from ..core import config, package_root
-
+from ..storage.storage import (
+    InlineButton,
+    InternalTemplateStorage,
+    Template,
+    TemplateStorage,
+)
 from ..watcher.watcher import TemplateWatcher
-from ..storage.storage import TemplateStorage, InternalTemplateStorage, Template, InlineButton
 
 
 class BaseRouter(ABC):
@@ -24,11 +28,10 @@ class BaseRouter(ABC):
         self._default_template = default_template
 
         self._internal_templates_dir = package_root / "templates"
-        self._internal_default_template = {
-            "text": "Default template"
-        }
-        self._internal_storage = InternalTemplateStorage(self._internal_templates_dir,
-                                                         self._internal_default_template)
+        self._internal_default_template = {"text": "Default template"}
+        self._internal_storage = InternalTemplateStorage(
+            self._internal_templates_dir, self._internal_default_template
+        )
 
         self._storage = TemplateStorage(self._templates_dir, self._default_template)
 
@@ -56,12 +59,14 @@ class BaseRouter(ABC):
         def wrapper(func):
             self.command_handlers[command] = func
             return func
+
         return wrapper
 
     def register_callback(self, callback: str):
         def wrapper(func):
             self.callback_handlers[callback] = func
             return func
+
         return wrapper
 
     # async def handle(self, command: str, *args, **kwargs):
@@ -77,7 +82,9 @@ class BaseRouter(ABC):
     async def _send_msg(self, chat_id: int, template: Template):
         pass
 
-    def _template(self, template_name: str, is_internal: bool = False) -> Union[Template, None]:
+    def _template(
+        self, template_name: str, is_internal: bool = False
+    ) -> Union[Template, None]:
         is_internal = False
         storage = self._internal_storage if is_internal else self._storage
         template = storage[template_name]
@@ -88,7 +95,11 @@ class BaseRouter(ABC):
 
     @staticmethod
     def _template_callback(template_name: str):
-        return BaseRouter.TEMPLATE_CALLBACK_ID + BaseRouter.TEMPLATE_CALLBACK_SEP + template_name
+        return (
+            BaseRouter.TEMPLATE_CALLBACK_ID
+            + BaseRouter.TEMPLATE_CALLBACK_SEP
+            + template_name
+        )
 
     def _on_startup(self):
         asyncio.create_task(self._always_retry_dispatcher())
@@ -101,6 +112,7 @@ class BaseRouter(ABC):
         self._chat_id = chat_id
         template = self._template("live_template_start", is_internal=True)
         await self._send_msg(self._chat_id, template)
+
     # Command: list_template_names
     # Callback: list_template_names
     async def _list_template_names(self, *args, **kwargs):
@@ -116,7 +128,9 @@ class BaseRouter(ABC):
     # Callback: toggle_always_retry
     async def _toggle_always_retry(self, *args, **kwargs):
         self._always_retry = not self._always_retry
-        template = self._template(f"always_retry_{str(self._always_retry).lower()}", is_internal=True)
+        template = self._template(
+            f"always_retry_{str(self._always_retry).lower()}", is_internal=True
+        )
         config["always_retry"] = self._always_retry
         await self._send_msg(self._chat_id, template)
 
@@ -149,5 +163,7 @@ class BaseRouter(ABC):
 
     async def _send_retry_btn(self, template_name: str):
         template = self._template("retry_btn", is_internal=True)
-        template.buttons = [InlineButton(template_name, self._template_callback(template_name))]
+        template.buttons = [
+            InlineButton(template_name, self._template_callback(template_name))
+        ]
         await self._send_msg(self._chat_id, template)

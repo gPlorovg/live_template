@@ -4,22 +4,29 @@ import os
 from pathlib import Path
 from typing import Union
 
-from aiogram import Router, Bot, F, Dispatcher
+from aiogram import Bot, Dispatcher, F, Router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.filters.callback_data import CallbackData
-from aiogram.types import CallbackQuery, InlineKeyboardButton, Message, InlineKeyboardMarkup
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from ..storage.storage import Template
-from ..router.base_router import BaseRouter
+from ..core.router.base_router import BaseRouter
+from ..core.storage.storage import Template
 
 
 def make_callback_class(prefix: str):
     class _Callback(CallbackData, prefix=prefix):
         name: str
+
     return _Callback
+
 
 def render_buttons(buttons: list, row_sizes: list) -> InlineKeyboardMarkup:
     ikb = InlineKeyboardBuilder()
@@ -45,7 +52,7 @@ def to_message(template: Template) -> dict:
     return {
         "text": template.text,
         "parse_mode": template.parse_mode,
-        "reply_markup": render_buttons(template.buttons, template.btn_row_sizes)
+        "reply_markup": render_buttons(template.buttons, template.btn_row_sizes),
     }
 
 
@@ -62,6 +69,7 @@ def callback_wrapper(func):
         finally:
             if callback_query:
                 await callback_query.answer()
+
     return wrapper
 
 
@@ -92,12 +100,16 @@ class AiogramRouter(BaseRouter, Router):
             self.message(Command(command))(self.command_handlers[command])
 
         for callback in self.callback_handlers:
-            self.callback_query(F.data == callback)(callback_wrapper(self.callback_handlers[callback]))
+            self.callback_query(F.data == callback)(
+                callback_wrapper(self.callback_handlers[callback])
+            )
 
         @self.callback_query(AiogramRouter.TEMPLATE_CALLBACK_DATA.filter())
         @callback_wrapper
-        async def get_template(callback_query: CallbackQuery,
-                               callback_data:AiogramRouter.TEMPLATE_CALLBACK_DATA):
+        async def get_template(
+            callback_query: CallbackQuery,
+            callback_data: AiogramRouter.TEMPLATE_CALLBACK_DATA,
+        ):
             await self._get_template(callback_data.name)
 
 

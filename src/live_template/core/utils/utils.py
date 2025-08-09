@@ -1,7 +1,7 @@
 import ast
 from importlib.abc import Traversable
 from pathlib import Path
-from typing import Union, Iterable
+from typing import Iterable, Union
 
 from ..core import log
 
@@ -37,8 +37,12 @@ def parse_template(path: Union[str, Path, Traversable]) -> dict:
         for node in tree.body:
             if isinstance(node, ast.Assign):
                 target = node.targets[0]
-                if isinstance(target, ast.Name) and target.id in {"text", "parse_mode", "buttons",
-                                                                  "btn_row_sizes"}:
+                if isinstance(target, ast.Name) and target.id in {
+                    "text",
+                    "parse_mode",
+                    "buttons",
+                    "btn_row_sizes",
+                }:
                     data[target.id] = ast.literal_eval(node.value)
         return data
     except (OSError, SyntaxError):
@@ -46,17 +50,19 @@ def parse_template(path: Union[str, Path, Traversable]) -> dict:
         return {}
 
 
-def get_internal_name_by_path(path: Traversable, templates_dir: Traversable ) -> str:
+def get_internal_name_by_path(path: Traversable, templates_dir: Traversable) -> str:
     if not path.name.endswith(".py"):
         raise ValueError(f"Wrong path to template '{path}'")
 
     if not str(path).startswith(str(templates_dir)):
         raise ValueError(f"Wrong root '{templates_dir}' for path '{path}'")
 
-    return str(path)[len(str(templates_dir)):].lstrip("/").rstrip(".py")
+    return str(path)[len(str(templates_dir)) :].lstrip("/").rstrip(".py")
 
 
-def get_path_by_internal_name(template_name: str, templates_dir: Traversable) -> Traversable:
+def get_path_by_internal_name(
+    template_name: str, templates_dir: Traversable
+) -> Traversable:
     path = templates_dir.joinpath(template_name + ".py")
     if not path.is_file():
         raise ValueError(f"Wrong path to template '{path}'")

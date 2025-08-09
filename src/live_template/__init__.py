@@ -1,3 +1,4 @@
-from .storage.parser import TemplateParser
+from adapters import AiogramRouter
+from core import TemplateParser
 
-__all__ = ["TemplateParser"]
+__all__ = ["AiogramRouter", "TemplateParser"]

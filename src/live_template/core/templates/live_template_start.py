@@ -8,18 +8,9 @@ text = """
 parse_mode = "HTML"
 
 buttons = [
-    {
-    "text": "Templates",
-    "callback_data": "list_template_names"
-    },
-    {
-        "text": "Show all",
-        "callback_data": "list_templates"
-    },
-    {
-        "text": "Always retry",
-        "callback_data": "toggle_always_retry"
-    },
+    {"text": "Templates", "callback_data": "list_template_names"},
+    {"text": "Show all", "callback_data": "list_templates"},
+    {"text": "Always retry", "callback_data": "toggle_always_retry"},
 ]
 
 btn_row_sizes = [1]
