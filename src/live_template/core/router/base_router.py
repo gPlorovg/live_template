@@ -27,7 +27,7 @@ class BaseRouter(ABC):
         self._templates_dir = Path(templates_dir)
         self._default_template = default_template
 
-        self._internal_templates_dir = package_root / "templates"
+        self._internal_templates_dir = package_root / "core" / "templates"
         self._internal_default_template = {"text": "Default template"}
         self._internal_storage = InternalTemplateStorage(
             self._internal_templates_dir, self._internal_default_template
@@ -85,7 +85,6 @@ class BaseRouter(ABC):
     def _template(
         self, template_name: str, is_internal: bool = False
     ) -> Union[Template, None]:
-        is_internal = False
         storage = self._internal_storage if is_internal else self._storage
         template = storage[template_name]
         if not template:
