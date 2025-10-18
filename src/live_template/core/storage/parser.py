@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from ..storage.storage import TemplateStorage
+from .storage import TemplateStorage, Template
 
 
 class TemplateParser:
@@ -13,6 +13,26 @@ class TemplateParser:
         if template:
             return template.to_dict()
         return {}
+
+    def render_template(self, template_name: str, **kwargs) -> Template:
+        """
+        :param template_name: name of template. user / to separate parts
+        :param kwargs: parameters for template text formating
+        :return: Template object
+        """
+        template = self._storage[template_name]
+        if template and template.text:
+            template.text = template.text.format(**kwargs)
+
+        return template
+
+    def set_storage(self, storage: TemplateStorage):
+        """
+        WARNING!!! MAY BE UNSTABLE! DO NOT USE IN PRODUCTION ENVIRONMENT!
+        :param storage: your lt router storage with realtime updatable templates
+        :return:
+        """
+        self._storage = storage
 
     def __getitem__(self, item):
         return self.get_template(item)
