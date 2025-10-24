@@ -5,14 +5,13 @@ from aiogram.types import (
     CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    Message,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from live_template.core.storage.storage import Template
 
 
-def make_callback_class(prefix: str):
+def make_callback_class(prefix: str) -> type:
     class _Callback(CallbackData, prefix=prefix):
         name: str
 
@@ -49,7 +48,7 @@ def to_message(template: Template) -> dict:
 
 def callback_wrapper(func):
     @functools.wraps(func)
-    async def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs) -> None:
         callback_query = None
         for arg in args:
             if isinstance(arg, CallbackQuery):

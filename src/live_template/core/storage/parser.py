@@ -1,11 +1,10 @@
 from pathlib import Path
-from typing import Union
 
-from .storage import TemplateStorage, Template
+from .storage import Template, TemplateStorage
 
 
 class TemplateParser:
-    def __init__(self, templates_dir: Union[str, Path]):
+    def __init__(self, templates_dir: str | Path):
         self._storage = TemplateStorage(templates_dir, {})
 
     def get_template(self, template_name: str) -> dict:

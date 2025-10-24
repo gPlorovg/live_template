@@ -8,7 +8,6 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 from importlib.abc import Traversable
 from pathlib import Path
-from typing import Union
 
 from ..core import log, package_root
 from ..utils.utils import (
@@ -26,7 +25,7 @@ class InlineButton:
     text: str
     callback_data: str
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return asdict(self)
 
 
@@ -41,10 +40,10 @@ class Template:
     name: str
     text: str = ""
     parse_mode: ParseMode = ParseMode.HTML
-    buttons: Union[list[list[InlineButton]], list[InlineButton], None] = None
-    btn_row_sizes: Union[list[int], None] = None
+    buttons: list[list[InlineButton]] | list[InlineButton] | None = None
+    btn_row_sizes: list[int] | None = None
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return asdict(self)
 
     def __post_init__(self):
@@ -62,7 +61,7 @@ class Template:
 
         # Convert buttons from a one- or two-dimensional list of dicts to
         # one- or two-dimensional list of InlineButtons
-        def to_inline_button(obj: Union[dict, InlineButton]) -> InlineButton:
+        def to_inline_button(obj: dict | InlineButton) -> InlineButton:
             return InlineButton(**obj) if isinstance(obj, dict) else obj
 
         if self.buttons:
@@ -81,7 +80,7 @@ class Template:
 
 
 class BaseTemplateStorage:
-    def __init__(self, templates_dir: Union[str, Path], default_template: dict):
+    def __init__(self, templates_dir: str | Path, default_template: dict):
         self._storage: dict[str, Template] = {}
         self.default_template = default_template
         self.templates_dir = Path(templates_dir)
@@ -111,20 +110,20 @@ class BaseTemplateStorage:
 
         log.info("Loaded " + str(self))
 
-    def names(self):
+    def names(self) -> list:
         return list(self._storage.keys())
 
-    def list(self):
+    def list(self) -> list:
         return list(self._storage.items())
 
-    def get_template(self, template_name: str) -> Union[Template, None]:
+    def get_template(self, template_name: str) -> Template | None:
         try:
             return self._storage[template_name]
         except KeyError:
             log.exception(f"No template with name '{template_name}'")
             return None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "templates: " + ", ".join(map(lambda s: f"'{s}'", self.names()))
 
     def __getitem__(self, template_name: str) -> Template:
@@ -135,7 +134,7 @@ class BaseTemplateStorage:
 
 
 class TemplateStorage(BaseTemplateStorage):
-    def __init__(self, templates_dir: Union[str, Path], default_template: dict):
+    def __init__(self, templates_dir: str | Path, default_template: dict):
         super().__init__(templates_dir, default_template)
 
         if not self.templates_dir.is_dir():

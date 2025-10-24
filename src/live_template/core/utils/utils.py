@@ -1,12 +1,12 @@
 import ast
+from collections.abc import Iterable
 from importlib.abc import Traversable
 from pathlib import Path
-from typing import Iterable, Union
 
 from ..core import log
 
 
-def get_path_by_name(template_name: str, templates_dir: Union[str, Path]) -> Path:
+def get_path_by_name(template_name: str, templates_dir: str | Path) -> Path:
     name = Path(template_name).with_suffix(".py")
     path = Path(templates_dir) / name
     if not path.is_file():
@@ -14,7 +14,7 @@ def get_path_by_name(template_name: str, templates_dir: Union[str, Path]) -> Pat
     return path
 
 
-def get_name_by_path(path: Union[str, Path], templates_dir: Union[str, Path]) -> str:
+def get_name_by_path(path: str | Path, templates_dir: str | Path) -> str:
     name = Path(path)
     if not name.suffix == ".py":
         raise ValueError(f"Wrong path to template '{path}'")
@@ -25,7 +25,7 @@ def get_name_by_path(path: Union[str, Path], templates_dir: Union[str, Path]) ->
     return str(name)
 
 
-def parse_template(path: Union[str, Path, Traversable]) -> dict:
+def parse_template(path: str | Path | Traversable) -> dict:
     if not isinstance(path, Traversable):
         path = Path(path)
 

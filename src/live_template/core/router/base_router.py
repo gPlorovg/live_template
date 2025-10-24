@@ -1,7 +1,6 @@
-import asyncio
 from abc import ABC, abstractmethod
+import asyncio
 from pathlib import Path
-from typing import Union
 
 from ..core import config, package_root
 from ..storage.storage import (
@@ -18,7 +17,7 @@ class BaseRouter(ABC):
     START_COMMAND = "start_lt"
     TEMPLATE_CALLBACK_SEP = ":"
 
-    def __init__(self, templates_dir: Union[str, Path], default_template: dict):
+    def __init__(self, templates_dir: str | Path, default_template: dict):
         super().__init__()
 
         self.command_handlers = {}
@@ -84,7 +83,7 @@ class BaseRouter(ABC):
 
     def _template(
         self, template_name: str, is_internal: bool = False
-    ) -> Union[Template, None]:
+    ) -> Template | None:
         storage = self._internal_storage if is_internal else self._storage
         template = storage[template_name]
         if not template:
@@ -93,7 +92,7 @@ class BaseRouter(ABC):
         return template
 
     @staticmethod
-    def _template_callback(template_name: str):
+    def _template_callback(template_name: str) -> str:
         return (
             BaseRouter.TEMPLATE_CALLBACK_ID
             + BaseRouter.TEMPLATE_CALLBACK_SEP

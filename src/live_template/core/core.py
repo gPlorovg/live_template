@@ -1,6 +1,7 @@
-import logging
 from importlib.abc import Traversable
 from importlib.resources import files
+import logging
+from typing import Any
 
 
 class Config:
@@ -8,13 +9,13 @@ class Config:
         self._path = config_dir.joinpath(filename)
         self._data = dict()
 
-    def get(self, key, default=None):
+    def get(self, key, default=None) -> Any:
         return self._data.get(key, default)
 
     def set(self, key, value):
         self._data[key] = value
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> Any:
         return self.get(key)
 
     def __setitem__(self, key, value):

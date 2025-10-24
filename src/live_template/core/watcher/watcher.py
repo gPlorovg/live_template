@@ -1,8 +1,8 @@
 import asyncio
 import functools
+from pathlib import Path
 import threading
 import time
-from pathlib import Path
 
 from watchdog.events import FileSystemEvent, PatternMatchingEventHandler
 from watchdog.observers import Observer

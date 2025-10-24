@@ -18,30 +18,42 @@ aiogram = ["aiogram"]
 ptb = ["python-telegram-bot"]
 
 [tool.poetry.group.dev.dependencies]
-black = "^25.1.0"
 pytest = "^8.4.1"
 ruff = "^0.12.8"
-isort = "^6.0.1"
-mypy = "^1.17.1"
 dotenv = "^0.9.9"
+pre-commit = "^4.3.0"
 
 [build-system]
 requires = ["poetry-core >= 1.9.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
-line-lenght = 88
-target-version = ["py310"]
-
-[tool.isort]
-profile = "black"
-
 [tool.ruff]
 line-length = 88
 target-version = "py310"
+exclude = [
+  "tests",
+  "dist",
+  "src/live_template/core/templates"
+]
 
-[tool.mypy]
-strict = true
+[tool.ruff.lint]
+select = [
+  "E", "F",        # pycodestyle/pyflakes (основа)
+  "I",             # isort (сортировка импортов через Ruff)
+  "B",             # bugbear
+  "UP",            # pyupgrade
+  "W",             # pycodestyle W*
+  "C90",           # mccabe (сложность)
+  "N",             # pep8-naming
+]
+ignore = [
+  "E501",          # длина строк — контролируем форматтером
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["live_template"]
+combine-as-imports = true
+force-sort-within-sections = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"

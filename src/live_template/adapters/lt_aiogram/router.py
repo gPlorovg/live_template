@@ -1,7 +1,6 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import Union
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.client.default import DefaultBotProperties
@@ -9,21 +8,19 @@ from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import (
     CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
     Message,
 )
 
 from live_template.core.router.base_router import BaseRouter
 from live_template.core.storage.storage import Template
 
-from .utils import make_callback_class, to_message, callback_wrapper
+from .utils import callback_wrapper, make_callback_class, to_message
 
 
 class AiogramRouter(BaseRouter, Router):
     TEMPLATE_CALLBACK_DATA = make_callback_class(BaseRouter.TEMPLATE_CALLBACK_ID)
 
-    def __init__(self, templates_dir: Union[str, Path], default_template: dict):
+    def __init__(self, templates_dir: str | Path, default_template: dict):
         super().__init__(templates_dir, default_template)
         self._bot = None
         self._setup_handlers()
@@ -64,8 +61,8 @@ async def main():
     from dotenv import load_dotenv
 
     load_dotenv()
-    BOT_TOKEN = os.getenv("BOT_TOKEN")
-    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot_token = os.getenv("BOT_TOKEN")
+    bot = Bot(token=bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
     lt_router = AiogramRouter("../templates", {})
     dp.include_router(lt_router)
