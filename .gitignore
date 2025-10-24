@@ -2,3 +2,4 @@
 snd*.py
 poetry.lock
 *.env
+dist
