@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import asyncio
+from asyncio import AbstractEventLoop
 from pathlib import Path
 
 from ..core import config, package_root
@@ -35,9 +36,8 @@ class BaseRouter(ABC):
         self._storage = TemplateStorage(self._templates_dir, self._default_template)
 
         self._tw_queue = asyncio.Queue()
-        self._tw_loop = asyncio.get_running_loop()
-        self._tw = TemplateWatcher(self._storage, self._tw_queue, self._tw_loop)
-        self._tw.start_watching()
+        self._tw_loop: AbstractEventLoop | None = None
+        self._tw: TemplateWatcher | None = None
 
         self._chat_id = None
         self._always_retry = False
@@ -100,11 +100,16 @@ class BaseRouter(ABC):
         )
 
     def _on_startup(self):
+        self._tw_loop = asyncio.get_running_loop()
+        self._tw = TemplateWatcher(self._storage, self._tw_queue, self._tw_loop)
+        self._tw.start_watching()
         asyncio.create_task(self._always_retry_dispatcher())
 
     async def _on_shutdown(self):
         await self._tw_queue.put(None)
 
+    # TODO: узкое место: chat_id получается только после нажатия /start
+    # TODO: небезопасно: пользователи могут получить доступ к шаблонам во время разработки
     # Command: lt_start
     async def _start(self, chat_id: int):
         self._chat_id = chat_id
