@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from live_template import TemplateParser
+from live_template.core.storage.parser import TemplateParser
 
 from .utils import to_message
 
