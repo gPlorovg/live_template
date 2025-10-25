@@ -5,7 +5,6 @@ translate it to file names to check exists.
 """
 
 from dataclasses import asdict, dataclass
-from enum import Enum
 from importlib.abc import Traversable
 from pathlib import Path
 
@@ -29,17 +28,14 @@ class InlineButton:
         return asdict(self)
 
 
-class ParseMode(Enum):
-    HTML = "HTML"
-    MARKDOWN = "MARKDOWN"
-    MARKDOWN_V2 = "MARKDOWN_V2"
+PARSE_MODES = {"HTML", "MARKDOWN", "MARKDOWN_V2"}
 
 
 @dataclass
 class Template:
     name: str
     text: str = ""
-    parse_mode: ParseMode = ParseMode.HTML
+    parse_mode: str = "HTML"
     buttons: list[list[InlineButton]] | list[InlineButton] | None = None
     btn_row_sizes: list[int] | None = None
 
@@ -47,17 +43,13 @@ class Template:
         return asdict(self)
 
     def __post_init__(self):
-        # Convert parse_mode form a string to ParseMode
-        if isinstance(self.parse_mode, str):
-            try:
-                self.parse_mode = ParseMode[self.parse_mode]
-            except KeyError:
-                log.exception(
-                    f"Unacceptable value for parse_mode: {self.parse_mode}\n"
-                    f"Acceptable values: "
-                    f"{' | '.join([mode.value for mode in ParseMode])}"
-                )
-                return
+        if not (isinstance(self.parse_mode, str) and self.parse_mode in PARSE_MODES):
+            log.exception(
+                f"Unacceptable value for parse_mode: {self.parse_mode}\n"
+                f"Acceptable values: "
+                f"{' | '.join(PARSE_MODES)}"
+            )
+            return
 
         # Convert buttons from a one- or two-dimensional list of dicts to
         # one- or two-dimensional list of InlineButtons
