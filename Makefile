@@ -5,7 +5,7 @@ PYTEST := $(VENV)/bin/pytest
 
 .PHONY: build clean test
 
-build: clean-dist venv.test test clean
+build: clean-dist venv.test test
 
 venv.test:
 	rm -rf $(VENV)
