@@ -22,6 +22,9 @@ pytest = "^8.4.1"
 ruff = "^0.12.8"
 dotenv = "^0.9.9"
 pre-commit = "^4.3.0"
+aiogram = "^3.22.0"
+pytest-cov = "^7.0.0"
+pytest-asyncio = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core >= 1.9.0"]
@@ -59,3 +62,5 @@ force-sort-within-sections = true
 minversion = "6.0"
 addopts = "-ra -q"
 testpaths = ["tests"]
+norecursedirs = ["tests/templates"]
+asyncio_mode = "auto"
